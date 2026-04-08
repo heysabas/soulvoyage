@@ -1,0 +1,543 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sv-blue:#1565C0;--sv-blue-light:#1976D2;--sv-blue-pale:#E3F2FD;--sv-blue-mid:#42A5F5;
+  --sv-white:#fff;--sv-text:#0D2B5E;--sv-muted:#5C7A9E;--sv-border:#B3D4F5;
+  --sv-accent:#0288D1;--sv-bg:#F0F7FF;
+}
+body{font-family:var(--font-sans,system-ui,sans-serif);background:var(--sv-bg)}
+#app{min-height:600px;background:var(--sv-bg)}
+
+.sv-header{background:var(--sv-blue);color:white;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.sv-logo{display:flex;align-items:center;gap:10px}
+.sv-logo-icon{width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sv-logo-text{font-size:20px;font-weight:500;letter-spacing:.5px;color:white}
+.sv-logo-sub{font-size:11px;color:rgba(255,255,255,0.7);margin-top:1px}
+.lang-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:500}
+.lang-btn:hover{background:rgba(255,255,255,0.25)}
+
+.screen{display:none;padding:24px}
+.screen.active{display:block}
+
+.hero{text-align:center;padding:40px 20px 32px}
+.hero-badge{display:inline-block;background:var(--sv-blue-pale);color:var(--sv-blue);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;margin-bottom:20px;border:1px solid var(--sv-border)}
+.hero h1{font-size:28px;font-weight:500;color:var(--sv-text);margin-bottom:12px;line-height:1.3}
+.hero p{font-size:15px;color:var(--sv-muted);line-height:1.7;max-width:480px;margin:0 auto 28px}
+.start-btn{background:var(--sv-blue);color:white;border:none;padding:14px 36px;border-radius:30px;font-size:16px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.start-btn:hover{background:var(--sv-blue-light)}
+.start-btn svg{width:18px;height:18px}
+
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0;max-width:480px;margin-left:auto;margin-right:auto}
+.type-chip{background:var(--sv-white);border:1px solid var(--sv-border);border-radius:8px;padding:10px 6px;text-align:center;font-size:13px;font-weight:500;color:var(--sv-blue)}
+.type-chip span{display:block;font-size:10px;color:var(--sv-muted);margin-top:2px;font-weight:400}
+
+.q-container{max-width:620px;margin:0 auto}
+.progress-wrap{margin-bottom:28px}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--sv-muted);margin-bottom:8px}
+.progress-bar{height:6px;background:var(--sv-border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--sv-blue);border-radius:3px;transition:width .4s ease}
+
+.dimension-tag{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:10px;margin-bottom:12px;background:var(--sv-blue-pale);color:var(--sv-blue);border:1px solid var(--sv-border)}
+.q-text{font-size:18px;font-weight:500;color:var(--sv-text);line-height:1.5;margin-bottom:8px}
+.q-sub{font-size:14px;color:var(--sv-muted);margin-bottom:28px;line-height:1.6}
+
+.scale-wrap{display:flex;flex-direction:column;gap:0;margin-bottom:32px}
+.scale-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--sv-muted);margin-bottom:10px;padding:0 4px}
+.scale-options{display:flex;gap:8px;justify-content:center}
+.scale-opt{width:48px;height:48px;border-radius:50%;border:2px solid var(--sv-border);background:var(--sv-white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--sv-muted);transition:all .15s}
+.scale-opt:hover{border-color:var(--sv-blue-mid);background:var(--sv-blue-pale);color:var(--sv-blue)}
+.scale-opt.selected{border-color:var(--sv-blue);background:var(--sv-blue);color:white}
+.scale-opt.large{width:52px;height:52px;font-size:14px}
+
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.nav-btn{background:var(--sv-white);border:1px solid var(--sv-border);color:var(--sv-blue);padding:10px 22px;border-radius:20px;font-size:14px;cursor:pointer;font-weight:500}
+.nav-btn:hover{background:var(--sv-blue-pale)}
+.nav-btn.primary{background:var(--sv-blue);color:white;border-color:var(--sv-blue)}
+.nav-btn.primary:hover{background:var(--sv-blue-light)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+
+.result-header{background:var(--sv-blue);color:white;text-align:center;padding:36px 24px;margin:-24px -24px 28px}
+.type-badge{font-size:48px;font-weight:500;letter-spacing:4px;display:block;margin-bottom:8px}
+.type-name{font-size:18px;opacity:.9;margin-bottom:4px}
+.type-tagline{font-size:14px;opacity:.7;font-style:italic}
+
+.dim-bars{display:flex;flex-direction:column;gap:16px;margin-bottom:28px}
+.dim-row{background:var(--sv-white);border:1px solid var(--sv-border);border-radius:12px;padding:14px 18px}
+.dim-label{display:flex;justify-content:space-between;font-size:13px;font-weight:500;color:var(--sv-text);margin-bottom:8px}
+.dim-bar-wrap{position:relative;height:10px;background:var(--sv-blue-pale);border-radius:5px;overflow:visible}
+.dim-bar-fill{height:100%;border-radius:5px;background:var(--sv-blue)}
+.dim-pole{position:absolute;top:-18px;font-size:11px;font-weight:500;color:var(--sv-muted)}
+.dim-pole.left{left:0}
+.dim-pole.right{right:0}
+.dim-pct{font-size:12px;color:var(--sv-blue);font-weight:500;margin-top:4px;text-align:center}
+
+.result-section{background:var(--sv-white);border:1px solid var(--sv-border);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.section-title{font-size:13px;font-weight:500;color:var(--sv-blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.section-body{font-size:14px;color:var(--sv-text);line-height:1.7}
+
+.trait-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.trait-chip{background:var(--sv-blue-pale);color:var(--sv-blue);border:1px solid var(--sv-border);border-radius:16px;padding:5px 14px;font-size:13px;font-weight:500}
+
+.compat-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.compat-chip{background:var(--sv-white);border:1px solid var(--sv-border);border-radius:8px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--sv-text)}
+.compat-chip.best{border-color:var(--sv-blue);color:var(--sv-blue);background:var(--sv-blue-pale)}
+
+.action-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.action-btn{flex:1;min-width:120px;padding:12px 16px;border-radius:24px;font-size:14px;font-weight:500;cursor:pointer;text-align:center;border:1px solid var(--sv-border);background:var(--sv-white);color:var(--sv-blue)}
+.action-btn.primary{background:var(--sv-blue);color:white;border-color:var(--sv-blue)}
+.action-btn:hover{opacity:.85}
+
+.toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--sv-blue);color:white;padding:10px 22px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+
+<div id="app" style="position:relative">
+  <div class="sv-header">
+    <div class="sv-logo">
+      <div class="sv-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8c-2 0-4 1.5-4 4s2 4 4 4 4-1.5 4-4-2-4-4-4z"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      </div>
+      <div>
+        <div class="sv-logo-text">SoulVoyage</div>
+        <div class="sv-logo-sub" id="logo-sub">Personality Explorer</div>
+      </div>
+    </div>
+    <button class="lang-btn" onclick="toggleLang()" id="lang-toggle">🌐 Bahasa</button>
+  </div>
+
+  <div id="screen-home" class="screen active">
+    <div class="hero">
+      <div class="hero-badge" id="badge-text">Official MBTI — 93 Questions</div>
+      <h1 id="hero-title">Who are you,<br>really?</h1>
+      <p id="hero-desc">Take the full MBTI personality assessment based on Carl Jung's original theory. Discover your type, understand your mind, and explore what makes you uniquely <em>you</em>.</p>
+      <button class="start-btn" onclick="startTest()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span id="start-label">Begin Your Journey</span>
+      </button>
+      <div style="margin-top:36px">
+        <div style="font-size:12px;color:var(--sv-muted);margin-bottom:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px" id="types-label">All 16 types</div>
+        <div class="type-grid">
+          <div class="type-chip">INTJ<span>Architect</span></div>
+          <div class="type-chip">INTP<span>Thinker</span></div>
+          <div class="type-chip">ENTJ<span>Commander</span></div>
+          <div class="type-chip">ENTP<span>Debater</span></div>
+          <div class="type-chip">INFJ<span>Advocate</span></div>
+          <div class="type-chip">INFP<span>Mediator</span></div>
+          <div class="type-chip">ENFJ<span>Protagonist</span></div>
+          <div class="type-chip">ENFP<span>Campaigner</span></div>
+          <div class="type-chip">ISTJ<span>Inspector</span></div>
+          <div class="type-chip">ISFJ<span>Defender</span></div>
+          <div class="type-chip">ESTJ<span>Executive</span></div>
+          <div class="type-chip">ESFJ<span>Consul</span></div>
+          <div class="type-chip">ISTP<span>Crafter</span></div>
+          <div class="type-chip">ISFP<span>Adventurer</span></div>
+          <div class="type-chip">ESTP<span>Entrepreneur</span></div>
+          <div class="type-chip">ESFP<span>Entertainer</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-test" class="screen">
+    <div class="q-container">
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="q-counter">Question 1 of 93</span>
+          <span id="q-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:1%"></div></div>
+      </div>
+      <div id="dimension-tag" class="dimension-tag">E / I</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-sub" id="q-sub"></div>
+      <div class="scale-wrap">
+        <div class="scale-labels">
+          <span id="label-agree">Strongly agree</span>
+          <span id="label-disagree">Strongly disagree</span>
+        </div>
+        <div class="scale-options" id="scale-opts">
+          <div class="scale-opt large" data-val="2" onclick="selectAnswer(2)">2</div>
+          <div class="scale-opt" data-val="1" onclick="selectAnswer(1)">1</div>
+          <div class="scale-opt" data-val="0" onclick="selectAnswer(0)">0</div>
+          <div class="scale-opt" data-val="-1" onclick="selectAnswer(-1)">-1</div>
+          <div class="scale-opt large" data-val="-2" onclick="selectAnswer(-2)">-2</div>
+        </div>
+      </div>
+      <div class="q-nav">
+        <button class="nav-btn" id="prev-btn" onclick="prevQ()" disabled id="prev-btn">&#8592; <span id="prev-label">Previous</span></button>
+        <button class="nav-btn primary" id="next-btn" onclick="nextQ()"><span id="next-label">Next</span> &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-result" class="screen">
+    <div class="result-header">
+      <span class="type-badge" id="res-type">INFP</span>
+      <div class="type-name" id="res-name">The Mediator</div>
+      <div class="type-tagline" id="res-tagline">Curious, open-minded, and driven by values</div>
+    </div>
+
+    <div class="dim-bars" id="dim-bars"></div>
+
+    <div class="result-section">
+      <div class="section-title" id="traits-title">Core traits</div>
+      <div class="trait-chips" id="res-traits"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-title" id="desc-title">Who you are</div>
+      <div class="section-body" id="res-desc"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-title" id="career-title">Career paths that fit you</div>
+      <div class="section-body" id="res-career"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-title" id="rel-title">In relationships</div>
+      <div class="section-body" id="res-rel"></div>
+    </div>
+
+    <div class="result-section">
+      <div class="section-title" id="compat-title">Compatible types</div>
+      <div class="compat-grid" id="res-compat"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn primary" onclick="shareResult()" id="share-btn">Share Result</button>
+      <button class="action-btn" onclick="retake()" id="retake-btn">Retake Test</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const T = {
+  en: {
+    logoSub:"Personality Explorer", badge:"Official MBTI — 93 Questions",
+    heroTitle:"Who are you,\nreally?",
+    heroDesc:"Take the full MBTI personality assessment based on Carl Jung's original theory. Discover your type, understand your mind, and explore what makes you uniquely you.",
+    startLabel:"Begin Your Journey", typesLabel:"All 16 types",
+    langBtn:"🌐 Bahasa", prevLabel:"Previous", nextLabel:"Next",
+    finishLabel:"See My Result",
+    qCounter:(n,t)=>`Question ${n} of ${t}`,
+    labelAgree:"Strongly agree", labelDisagree:"Strongly disagree",
+    dimTags:{EI:"E / I",SN:"S / N",TF:"T / F",JP:"J / P"},
+    traitsTitle:"Core traits", descTitle:"Who you are",
+    careerTitle:"Career paths that fit you", relTitle:"In relationships",
+    compatTitle:"Compatible types",
+    shareBtn:"Share Result", retakeBtn:"Retake Test",
+    copied:"Link copied to clipboard!",
+    dimLabels:{
+      E:{left:"Extraversion",right:"Introversion"},
+      S:{left:"Sensing",right:"Intuition"},
+      T:{left:"Thinking",right:"Feeling"},
+      J:{left:"Judging",right:"Perceiving"}
+    }
+  },
+  id: {
+    logoSub:"Penjelajah Kepribadian", badge:"MBTI Resmi — 93 Pertanyaan",
+    heroTitle:"Siapa kamu\nsebenarnya?",
+    heroDesc:"Ikuti tes kepribadian MBTI lengkap berdasarkan teori asli Carl Jung. Temukan tipe kepribadianmu, pahami pikiranmu, dan jelajahi apa yang membuatmu unik.",
+    startLabel:"Mulai Perjalanan", typesLabel:"16 tipe kepribadian",
+    langBtn:"🌐 English", prevLabel:"Sebelumnya", nextLabel:"Berikutnya",
+    finishLabel:"Lihat Hasilku",
+    qCounter:(n,t)=>`Pertanyaan ${n} dari ${t}`,
+    labelAgree:"Sangat setuju", labelDisagree:"Sangat tidak setuju",
+    dimTags:{EI:"E / I",SN:"S / N",TF:"T / F",JP:"J / P"},
+    traitsTitle:"Sifat utama", descTitle:"Siapa kamu",
+    careerTitle:"Jalur karier yang cocok", relTitle:"Dalam hubungan",
+    compatTitle:"Tipe yang cocok",
+    shareBtn:"Bagikan Hasil", retakeBtn:"Ulangi Tes",
+    copied:"Tautan disalin!",
+    dimLabels:{
+      E:{left:"Ekstraversi",right:"Introversi"},
+      S:{left:"Pengindraan",right:"Intuisi"},
+      T:{left:"Pemikiran",right:"Perasaan"},
+      J:{left:"Penilaian",right:"Persepsi"}
+    }
+  }
+};
+
+const questions = [
+  {dim:"EI",dir:1,en:"You find yourself energized after spending time with a large group of people.",id:"Kamu merasa bersemangat setelah menghabiskan waktu bersama banyak orang."},
+  {dim:"EI",dir:-1,en:"You often prefer spending your evenings alone rather than going out.",id:"Kamu sering lebih suka menghabiskan malam sendirian daripada pergi keluar."},
+  {dim:"EI",dir:1,en:"In social situations, you're usually the one to start a conversation.",id:"Dalam situasi sosial, biasanya kamulah yang memulai percakapan."},
+  {dim:"EI",dir:-1,en:"After a long day of socializing, you need quiet time to recharge.",id:"Setelah hari yang panjang bersosialisasi, kamu butuh waktu tenang untuk memulihkan energi."},
+  {dim:"EI",dir:1,en:"You enjoy being the center of attention in group settings.",id:"Kamu senang menjadi pusat perhatian dalam kelompok."},
+  {dim:"EI",dir:-1,en:"You prefer one-on-one conversations over group discussions.",id:"Kamu lebih suka percakapan satu-satu daripada diskusi kelompok."},
+  {dim:"EI",dir:1,en:"Meeting new people feels exciting and fun to you.",id:"Bertemu orang baru terasa menyenangkan dan menggembirakan bagimu."},
+  {dim:"EI",dir:-1,en:"You find it hard to express your thoughts and feelings spontaneously.",id:"Kamu merasa sulit mengungkapkan pikiran dan perasaan secara spontan."},
+  {dim:"EI",dir:1,en:"You tend to think out loud and talk through problems with others.",id:"Kamu cenderung berpikir keras dan membahas masalah bersama orang lain."},
+  {dim:"EI",dir:-1,en:"You often need to think before you speak, especially in groups.",id:"Kamu sering perlu berpikir sebelum berbicara, terutama dalam kelompok."},
+  {dim:"EI",dir:1,en:"You have a wide circle of friends and enjoy socializing frequently.",id:"Kamu memiliki lingkaran teman yang luas dan sering bersosialisasi."},
+  {dim:"EI",dir:-1,en:"You feel most like yourself when you're alone.",id:"Kamu merasa paling menjadi dirimu saat sendirian."},
+  {dim:"EI",dir:1,en:"You prefer to discuss ideas with others rather than think about them alone.",id:"Kamu lebih suka mendiskusikan ide bersama orang lain daripada memikirkannya sendiri."},
+  {dim:"EI",dir:-1,en:"Small talk and casual socializing feel draining to you.",id:"Obrolan ringan dan bersosialisasi terasa melelahkan bagimu."},
+  {dim:"EI",dir:1,en:"You often take initiative in group activities.",id:"Kamu sering mengambil inisiatif dalam kegiatan kelompok."},
+  {dim:"EI",dir:-1,en:"You feel uncomfortable when you have to speak in front of many people.",id:"Kamu merasa tidak nyaman saat harus berbicara di depan banyak orang."},
+  {dim:"EI",dir:1,en:"You generally prefer to be around people rather than by yourself.",id:"Kamu umumnya lebih suka berada di sekitar orang daripada sendirian."},
+  {dim:"EI",dir:-1,en:"You often find social events mentally exhausting, even when you enjoy them.",id:"Kamu sering merasa acara sosial menguras mental, meski kamu menikmatinya."},
+  {dim:"EI",dir:1,en:"You're comfortable introducing yourself to people you don't know.",id:"Kamu merasa nyaman memperkenalkan diri kepada orang yang tidak kamu kenal."},
+  {dim:"EI",dir:-1,en:"You prefer to observe a situation before jumping in.",id:"Kamu lebih suka mengamati situasi sebelum terjun ke dalamnya."},
+  {dim:"EI",dir:1,en:"You feel that being around people brings out the best in you.",id:"Kamu merasa berada di sekitar orang mengeluarkan yang terbaik dalam dirimu."},
+  {dim:"EI",dir:-1,en:"You tend to keep your thoughts and feelings to yourself.",id:"Kamu cenderung menyimpan pikiran dan perasaan untuk dirimu sendiri."},
+  {dim:"EI",dir:1,en:"Group projects energize you more than working alone.",id:"Proyek kelompok lebih membuatmu bersemangat daripada bekerja sendiri."},
+  {dim:"SN",dir:1,en:"You trust concrete facts and proven experiences more than theories.",id:"Kamu lebih mempercayai fakta nyata dan pengalaman yang terbukti daripada teori."},
+  {dim:"SN",dir:-1,en:"You're often more interested in what could be than in what is.",id:"Kamu lebih tertarik pada apa yang mungkin terjadi daripada apa yang ada sekarang."},
+  {dim:"SN",dir:1,en:"You prefer practical tasks with clear, measurable results.",id:"Kamu lebih suka tugas praktis dengan hasil yang jelas dan terukur."},
+  {dim:"SN",dir:-1,en:"You love exploring abstract concepts and hypothetical questions.",id:"Kamu suka menjelajahi konsep abstrak dan pertanyaan hipotetis."},
+  {dim:"SN",dir:1,en:"When solving a problem, you rely on past experience more than imagination.",id:"Saat memecahkan masalah, kamu mengandalkan pengalaman masa lalu lebih dari imajinasi."},
+  {dim:"SN",dir:-1,en:"You frequently think about patterns and connections between seemingly unrelated things.",id:"Kamu sering memikirkan pola dan hubungan antara hal-hal yang tampaknya tidak berkaitan."},
+  {dim:"SN",dir:1,en:"You pay close attention to detail and notice things others miss.",id:"Kamu sangat memperhatikan detail dan memperhatikan hal-hal yang terlewat orang lain."},
+  {dim:"SN",dir:-1,en:"You tend to think about the big picture rather than specific details.",id:"Kamu cenderung memikirkan gambaran besar daripada detail spesifik."},
+  {dim:"SN",dir:1,en:"You prefer step-by-step instructions rather than general guidelines.",id:"Kamu lebih suka instruksi langkah demi langkah daripada panduan umum."},
+  {dim:"SN",dir:-1,en:"You often rely on gut feelings or hunches when making decisions.",id:"Kamu sering mengandalkan perasaan atau firasat saat membuat keputusan."},
+  {dim:"SN",dir:1,en:"You prefer working with facts and data rather than ideas and concepts.",id:"Kamu lebih suka bekerja dengan fakta dan data daripada ide dan konsep."},
+  {dim:"SN",dir:-1,en:"You're drawn to creative and imaginative tasks.",id:"Kamu tertarik pada tugas-tugas yang kreatif dan imajinatif."},
+  {dim:"SN",dir:1,en:"You tend to focus on the present rather than worrying about the future.",id:"Kamu cenderung fokus pada masa kini daripada mencemaskan masa depan."},
+  {dim:"SN",dir:-1,en:"You often imagine future possibilities and scenarios.",id:"Kamu sering membayangkan kemungkinan dan skenario di masa depan."},
+  {dim:"SN",dir:1,en:"You prefer realistic goals over idealistic dreams.",id:"Kamu lebih suka tujuan realistis daripada impian idealis."},
+  {dim:"SN",dir:-1,en:"You find symbolic and metaphorical language more interesting than literal descriptions.",id:"Kamu merasa bahasa simbolis dan metaforis lebih menarik daripada deskripsi literal."},
+  {dim:"SN",dir:1,en:"You trust experience more than inspiration.",id:"Kamu lebih mempercayai pengalaman daripada inspirasi."},
+  {dim:"SN",dir:-1,en:"You're comfortable with ambiguity and unclear situations.",id:"Kamu nyaman dengan ambiguitas dan situasi yang tidak jelas."},
+  {dim:"SN",dir:1,en:"You prefer routine and consistency in your daily tasks.",id:"Kamu lebih suka rutinitas dan konsistensi dalam tugas sehari-hari."},
+  {dim:"SN",dir:-1,en:"New and unconventional approaches excite you.",id:"Pendekatan baru dan tidak konvensional membuatmu bersemangat."},
+  {dim:"SN",dir:1,en:"You describe things in a literal and precise way.",id:"Kamu menggambarkan sesuatu secara harfiah dan tepat."},
+  {dim:"SN",dir:-1,en:"You enjoy brainstorming and generating many different ideas.",id:"Kamu menikmati brainstorming dan menghasilkan banyak ide yang berbeda."},
+  {dim:"SN",dir:1,en:"You value common sense and practicality above all.",id:"Kamu menghargai akal sehat dan kepraktisan di atas segalanya."},
+  {dim:"TF",dir:1,en:"When making decisions, logic and consistency matter more to you than feelings.",id:"Saat membuat keputusan, logika dan konsistensi lebih penting bagimu daripada perasaan."},
+  {dim:"TF",dir:-1,en:"You often make decisions based on how they will affect other people's feelings.",id:"Kamu sering membuat keputusan berdasarkan bagaimana dampaknya pada perasaan orang lain."},
+  {dim:"TF",dir:1,en:"You believe the truth is more important than tact.",id:"Kamu percaya bahwa kebenaran lebih penting daripada tata krama."},
+  {dim:"TF",dir:-1,en:"You try to avoid conflict by considering others' feelings first.",id:"Kamu mencoba menghindari konflik dengan mempertimbangkan perasaan orang lain terlebih dahulu."},
+  {dim:"TF",dir:1,en:"When someone comes to you with a problem, you usually offer solutions rather than sympathy.",id:"Ketika seseorang datang kepadamu dengan masalah, kamu biasanya menawarkan solusi daripada simpati."},
+  {dim:"TF",dir:-1,en:"You are highly empathetic and can easily sense others' emotions.",id:"Kamu sangat empatik dan mudah merasakan emosi orang lain."},
+  {dim:"TF",dir:1,en:"You think it's important to be objective when assessing a situation.",id:"Kamu berpikir penting untuk bersikap objektif saat menilai situasi."},
+  {dim:"TF",dir:-1,en:"You often put others' needs above your own.",id:"Kamu sering mendahulukan kebutuhan orang lain di atas kebutuhanmu sendiri."},
+  {dim:"TF",dir:1,en:"You're comfortable making tough decisions even when they upset people.",id:"Kamu nyaman membuat keputusan sulit bahkan ketika itu membuat orang lain kesal."},
+  {dim:"TF",dir:-1,en:"It bothers you when people are unfairly treated, even if it doesn't affect you.",id:"Kamu merasa terganggu ketika orang diperlakukan tidak adil, meski itu tidak mempengaruhimu."},
+  {dim:"TF",dir:1,en:"You prefer logical analysis over emotional intuition when solving problems.",id:"Kamu lebih suka analisis logis daripada intuisi emosional dalam memecahkan masalah."},
+  {dim:"TF",dir:-1,en:"You value harmony and kindness in the relationships around you.",id:"Kamu menghargai keharmonisan dan kebaikan dalam hubungan di sekitarmu."},
+  {dim:"TF",dir:1,en:"You judge ideas and actions based on their logic and effectiveness.",id:"Kamu menilai ide dan tindakan berdasarkan logika dan efektivitasnya."},
+  {dim:"TF",dir:-1,en:"You often know how someone is feeling without them saying a word.",id:"Kamu sering tahu bagaimana perasaan seseorang tanpa mereka mengucapkan sepatah kata pun."},
+  {dim:"TF",dir:1,en:"You prefer clear and direct feedback, even if it's critical.",id:"Kamu lebih suka umpan balik yang jelas dan langsung, meski itu kritis."},
+  {dim:"TF",dir:-1,en:"You believe that how you say something is as important as what you say.",id:"Kamu percaya bahwa cara kamu menyampaikan sesuatu sama pentingnya dengan apa yang kamu sampaikan."},
+  {dim:"TF",dir:1,en:"You tend to stay emotionally detached when analyzing a problem.",id:"Kamu cenderung tetap tidak terlibat secara emosional saat menganalisis masalah."},
+  {dim:"TF",dir:-1,en:"You make decisions with your heart as much as your head.",id:"Kamu membuat keputusan dengan hatimu sama banyaknya dengan pikiranmu."},
+  {dim:"TF",dir:1,en:"You find it easier to criticize than to compliment.",id:"Kamu merasa lebih mudah mengkritik daripada memuji."},
+  {dim:"TF",dir:-1,en:"Maintaining close relationships matters deeply to you.",id:"Menjaga hubungan yang erat sangat penting bagimu."},
+  {dim:"JP",dir:1,en:"You prefer to have a structured plan before starting a project.",id:"Kamu lebih suka memiliki rencana yang terstruktur sebelum memulai suatu proyek."},
+  {dim:"JP",dir:-1,en:"You enjoy adapting plans as you go rather than sticking to a rigid schedule.",id:"Kamu menikmati adaptasi rencana saat berjalan daripada berpegang pada jadwal kaku."},
+  {dim:"JP",dir:1,en:"You feel uncomfortable when things are uncertain or unresolved.",id:"Kamu merasa tidak nyaman ketika sesuatu tidak pasti atau belum terselesaikan."},
+  {dim:"JP",dir:-1,en:"You're comfortable starting things without knowing how they'll end.",id:"Kamu nyaman memulai sesuatu tanpa tahu bagaimana hasilnya."},
+  {dim:"JP",dir:1,en:"You like to finish one task completely before moving to the next.",id:"Kamu suka menyelesaikan satu tugas sepenuhnya sebelum pindah ke tugas berikutnya."},
+  {dim:"JP",dir:-1,en:"You often work on multiple things at once and switch between them.",id:"Kamu sering mengerjakan banyak hal sekaligus dan beralih di antara mereka."},
+  {dim:"JP",dir:1,en:"You keep a tidy and organized workspace.",id:"Kamu menjaga ruang kerja yang rapi dan teratur."},
+  {dim:"JP",dir:-1,en:"You enjoy keeping your options open for as long as possible.",id:"Kamu suka mempertahankan pilihan terbuka selama mungkin."},
+  {dim:"JP",dir:1,en:"You make decisions quickly and stick to them.",id:"Kamu membuat keputusan dengan cepat dan berpegang padanya."},
+  {dim:"JP",dir:-1,en:"You're comfortable changing plans at the last minute.",id:"Kamu nyaman mengubah rencana di menit terakhir."},
+  {dim:"JP",dir:1,en:"You prefer scheduled appointments over spontaneous meet-ups.",id:"Kamu lebih suka janji yang terjadwal daripada pertemuan spontan."},
+  {dim:"JP",dir:-1,en:"You tend to procrastinate until the last minute to keep options open.",id:"Kamu cenderung menunda hingga menit terakhir untuk mempertahankan pilihan terbuka."},
+  {dim:"JP",dir:1,en:"You find it satisfying to check items off a to-do list.",id:"Kamu merasa puas mencentang item dari daftar tugas."},
+  {dim:"JP",dir:-1,en:"You feel limited by rigid rules and structured routines.",id:"Kamu merasa terbatas oleh aturan kaku dan rutinitas terstruktur."},
+  {dim:"JP",dir:1,en:"You prefer to set deadlines and stick to them.",id:"Kamu lebih suka menetapkan tenggat dan mematuhinya."},
+  {dim:"JP",dir:-1,en:"You'd rather explore many possibilities than commit to just one.",id:"Kamu lebih suka menjelajahi banyak kemungkinan daripada berkomitmen pada satu saja."},
+  {dim:"JP",dir:1,en:"You think it's important to follow through on your commitments.",id:"Kamu berpikir penting untuk menepati komitmenmu."},
+  {dim:"JP",dir:-1,en:"You enjoy spontaneous adventures and surprises.",id:"Kamu menikmati petualangan spontan dan kejutan."},
+  {dim:"JP",dir:1,en:"You prefer to be prepared rather than improvise.",id:"Kamu lebih suka mempersiapkan diri daripada berimprovisasi."},
+  {dim:"JP",dir:-1,en:"You're energized by unexpected changes and new opportunities.",id:"Kamu bersemangat dengan perubahan tak terduga dan peluang baru."},
+  {dim:"JP",dir:1,en:"You like having control over your schedule and routine.",id:"Kamu suka memiliki kontrol atas jadwal dan rutinitasmu."},
+  {dim:"JP",dir:-1,en:"You prefer to leave things open and decide later.",id:"Kamu lebih suka membiarkan sesuatu terbuka dan memutuskan nanti."}
+];
+
+const typeData = {
+  INTJ:{name:"The Architect",nameId:"Sang Arsitek",tagline:"Strategic, private, and relentlessly curious",taglineId:"Strategis, privat, dan selalu ingin tahu",traits:["Strategic","Independent","Determined","Innovative","Analytical"],traitsId:["Strategis","Mandiri","Teguh","Inovatif","Analitis"],desc:"You have an almost magical ability to see patterns where others see chaos. INTJs are rare visionaries — you build entire worlds in your head before anyone else has even spotted the problem. You're not cold, you're precise. Not antisocial, just selective.",descId:"Kamu memiliki kemampuan hampir magis untuk melihat pola di mana orang lain melihat kekacauan. INTJ adalah visioner langka — kamu membangun dunia di kepalamu sebelum orang lain bahkan menyadari masalahnya. Kamu bukan dingin, kamu tepat. Bukan antisosial, tapi selektif.",career:"Science, engineering, law, software development, architecture, financial analysis",careerId:"Ilmu pengetahuan, teknik, hukum, pengembangan perangkat lunak, arsitektur, analisis keuangan",rel:"You value deep intellectual connections. You're loyal and deeply committed once you trust someone — but that trust must be earned slowly.",relId:"Kamu menghargai hubungan intelektual yang mendalam. Kamu setia dan berkomitmen penuh setelah mempercayai seseorang — tapi kepercayaan itu harus diperoleh perlahan.",compat:["ENTP","ENFP","INTJ","INFJ"],bestCompat:["ENTP","ENFP"]},
+  INTP:{name:"The Thinker",nameId:"Sang Pemikir",tagline:"Logical, curious, and always asking 'but why?'",taglineId:"Logis, ingin tahu, dan selalu bertanya 'tapi mengapa?'",traits:["Logical","Creative","Curious","Objective","Reserved"],traitsId:["Logis","Kreatif","Ingin tahu","Objektif","Pendiam"],desc:"Your mind is a maze of interesting ideas that you never stop exploring. INTPs are the philosophers of personality types — you question everything, not out of doubt but out of pure fascination. Your brain never really shuts off, and that's both your superpower and your challenge.",descId:"Pikiranmu adalah labirin ide-ide menarik yang tidak pernah berhenti kamu jelajahi. INTP adalah filsuf tipe kepribadian — kamu mempertanyakan segalanya, bukan karena ragu tapi karena kekaguman murni. Otakmu tidak benar-benar mati, dan itu adalah kekuatan sekaligus tantanganmu.",career:"Mathematics, science research, philosophy, software engineering, data science",careerId:"Matematika, penelitian sains, filsafat, rekayasa perangkat lunak, ilmu data",rel:"You crave intellectual stimulation in relationships. Small talk bores you, but a conversation that challenges your ideas? That's your love language.",relId:"Kamu mendambakan rangsangan intelektual dalam hubungan. Obrolan ringan membosankanmu, tapi percakapan yang menantang idemu? Itulah bahasa cintamu.",compat:["ENTJ","ENTP","INTJ","INFJ"],bestCompat:["ENTJ","ENTP"]},
+  ENTJ:{name:"The Commander",nameId:"Sang Komandan",tagline:"Bold, strategic, and born to lead",taglineId:"Berani, strategis, dan terlahir untuk memimpin",traits:["Confident","Strategic","Driven","Decisive","Charismatic"],traitsId:["Percaya diri","Strategis","Bersemangat","Tegas","Karismatik"],desc:"You walk into a room and people notice. ENTJs are natural-born leaders — not because they demand authority, but because they see what needs to be done and simply do it. You're driven by vision and fueled by results. Inefficiency makes your skin crawl.",descId:"Kamu masuk ke ruangan dan orang-orang memperhatikan. ENTJ adalah pemimpin alami — bukan karena mereka menuntut otoritas, tapi karena mereka melihat apa yang perlu dilakukan dan langsung melakukannya. Kamu didorong oleh visi dan didorong oleh hasil. Ketidakefisienan membuatmu gatal.",career:"Executive leadership, entrepreneurship, law, management consulting, politics",careerId:"Kepemimpinan eksekutif, kewirausahaan, hukum, konsultasi manajemen, politik",rel:"You're intensely loyal and bring tremendous energy to relationships. You show love through action — solving problems, planning futures, pushing your partner to be their best.",relId:"Kamu sangat setia dan membawa energi luar biasa dalam hubungan. Kamu menunjukkan cinta melalui tindakan — memecahkan masalah, merencanakan masa depan, mendorong pasanganmu menjadi yang terbaik.",compat:["INTP","INFP","ENTJ","INTJ"],bestCompat:["INTP","INFP"]},
+  ENTP:{name:"The Debater",nameId:"Sang Pendebat",tagline:"Quick-witted, innovative, and loves a good argument",taglineId:"Cerdas, inovatif, dan suka berdebat",traits:["Innovative","Clever","Quick-witted","Curious","Strategic"],traitsId:["Inovatif","Cerdas","Gesit","Ingin tahu","Strategis"],desc:"You don't just think outside the box — you question whether the box should exist at all. ENTPs thrive on intellectual sparring, new ideas, and challenging the status quo. You're endlessly energetic, a bit chaotic, and surprisingly charming.",descId:"Kamu tidak hanya berpikir di luar kotak — kamu mempertanyakan apakah kotaknya perlu ada. ENTP berkembang melalui adu intelektual, ide-ide baru, dan menantang status quo. Kamu tak kenal lelah, sedikit kacau, dan mengejutkan menggemaskan.",career:"Entrepreneurship, law, innovation consulting, product design, journalism",careerId:"Kewirausahaan, hukum, konsultasi inovasi, desain produk, jurnalisme",rel:"You fall for people who can keep up with your mind. You need a partner who challenges you, surprises you, and doesn't take themselves too seriously.",relId:"Kamu jatuh hati pada orang yang bisa mengikuti pikiranmu. Kamu butuh pasangan yang menantangmu, mengejutkanmu, dan tidak terlalu serius.",compat:["INTJ","INFJ","ENTP","INTP"],bestCompat:["INTJ","INFJ"]},
+  INFJ:{name:"The Advocate",nameId:"Sang Advokat",tagline:"Visionary, empathetic, and deeply principled",taglineId:"Visioner, empatik, dan berprinsip kuat",traits:["Insightful","Principled","Compassionate","Creative","Determined"],traitsId:["Penuh wawasan","Berprinsip","Penuh kasih","Kreatif","Teguh"],desc:"You see the world not just as it is, but as it could be — and you feel a quiet but powerful calling to help it get there. INFJs are the rarest type, and for good reason: you combine deep empathy with a strategic mind. You understand people almost too well.",descId:"Kamu melihat dunia tidak hanya sebagaimana adanya, tapi sebagaimana mestinya — dan kamu merasakan panggilan diam yang kuat untuk membantu mewujudkannya. INFJ adalah tipe paling langka, dengan alasan yang baik: kamu memadukan empati mendalam dengan pikiran strategis.",career:"Psychology, counseling, writing, education, nonprofit leadership, medicine",careerId:"Psikologi, konseling, menulis, pendidikan, kepemimpinan nirlaba, kedokteran",rel:"You love deeply and expect your partner to match your level of depth. Surface-level connections leave you cold — you want a soulmate, not just a companion.",relId:"Kamu mencintai dengan dalam dan mengharapkan pasanganmu sesuai dengan tingkat kedalamanmu. Koneksi di permukaan membuatmu tidak nyaman — kamu menginginkan jiwa kembar, bukan sekadar teman.",compat:["ENTP","ENFP","INTJ","INFJ"],bestCompat:["ENTP","ENFP"]},
+  INFP:{name:"The Mediator",nameId:"Sang Mediator",tagline:"Idealistic, empathetic, and guided by deep values",taglineId:"Idealis, empatik, dan dipandu oleh nilai-nilai mendalam",traits:["Empathetic","Idealistic","Creative","Open-minded","Passionate"],traitsId:["Empatik","Idealis","Kreatif","Berpikiran terbuka","Bersemangat"],desc:"You carry the world's possibilities inside you. INFPs feel everything deeply — beauty, pain, hope, injustice — and you're driven by an inner compass of values that rarely wavers. You may look quiet from the outside, but inside you there's an entire universe of imagination.",descId:"Kamu membawa kemungkinan-kemungkinan dunia di dalam dirimu. INFP merasakan segalanya secara mendalam — keindahan, rasa sakit, harapan, ketidakadilan — dan kamu dipandu oleh kompas nilai internal yang jarang goyah. Kamu mungkin tampak pendiam dari luar, tapi di dalammu ada semesta imajinasi yang luas.",career:"Writing, art, music, psychology, social work, teaching, design",careerId:"Menulis, seni, musik, psikologi, pekerjaan sosial, mengajar, desain",rel:"You seek a relationship that feels meaningful and authentic above everything else. You're a devoted partner who gives fully — and you need someone who truly sees and appreciates you.",relId:"Kamu mencari hubungan yang terasa bermakna dan autentik di atas segalanya. Kamu adalah pasangan yang penuh dedikasi — dan kamu butuh seseorang yang benar-benar melihat dan menghargaimu.",compat:["ENFJ","ENTJ","INFP","INFJ"],bestCompat:["ENFJ","ENTJ"]},
+  ENFJ:{name:"The Protagonist",nameId:"Sang Protagonis",tagline:"Charismatic, inspiring, and deeply caring",taglineId:"Karismatik, inspiratif, dan peduli mendalam",traits:["Charismatic","Empathetic","Organized","Reliable","Inspiring"],traitsId:["Karismatik","Empatik","Terorganisir","Dapat diandalkan","Inspiratif"],desc:"People naturally gravitate toward you — not because you chase attention, but because you radiate genuine warmth and make everyone feel seen. ENFJs are the natural mentors of the world: you believe in people before they believe in themselves.",descId:"Orang-orang secara alami tertarik padamu — bukan karena kamu mengejar perhatian, tapi karena kamu memancarkan kehangatan tulus dan membuat semua orang merasa diperhatikan. ENFJ adalah mentor alami di dunia: kamu percaya pada orang sebelum mereka percaya pada diri sendiri.",career:"Teaching, counseling, HR management, public relations, social activism, coaching",careerId:"Mengajar, konseling, manajemen SDM, hubungan masyarakat, aktivisme sosial, pelatihan",rel:"You're an incredibly devoted partner who puts real effort into understanding what your loved ones need. You love hard, and you appreciate when that love is returned with honesty and care.",relId:"Kamu adalah pasangan yang sangat berdedikasi yang benar-benar berusaha memahami kebutuhan orang-orang yang kamu cintai. Kamu mencintai dengan sepenuh hati dan menghargai ketika cinta itu dikembalikan dengan kejujuran.",compat:["INFP","ISFP","ENFJ","INFJ"],bestCompat:["INFP","ISFP"]},
+  ENFP:{name:"The Campaigner",nameId:"Sang Petualang",tagline:"Enthusiastic, creative, and infectiously optimistic",taglineId:"Antusias, kreatif, dan optimistis menular",traits:["Enthusiastic","Creative","Sociable","Optimistic","Curious"],traitsId:["Antusias","Kreatif","Sosial","Optimistis","Ingin tahu"],desc:"You're the spark in the room — the one who sees potential in everything and makes everything feel a little more alive. ENFPs are driven by curiosity and fueled by connection. Life to you isn't a routine, it's an adventure you're always in the middle of.",descId:"Kamu adalah percikan di ruangan — yang melihat potensi dalam segalanya dan membuat segalanya terasa lebih hidup. ENFP didorong oleh rasa ingin tahu dan digerakkan oleh koneksi. Hidup bagimu bukanlah rutinitas, itu adalah petualangan yang selalu kamu jalani.",career:"Journalism, acting, coaching, entrepreneurship, advertising, counseling, education",careerId:"Jurnalisme, akting, pelatihan, kewirausahaan, periklanan, konseling, pendidikan",rel:"You fall in love with ideas, and you fall in love with people who embody them. You need a relationship with real depth, freedom to grow, and someone who gets excited about the world alongside you.",relId:"Kamu jatuh cinta dengan ide, dan jatuh cinta dengan orang-orang yang mewujudkannya. Kamu butuh hubungan dengan kedalaman nyata, kebebasan untuk berkembang, dan seseorang yang bersemangat tentang dunia bersamamu.",compat:["INFJ","INTJ","ENFP","ENTP"],bestCompat:["INFJ","INTJ"]},
+  ISTJ:{name:"The Inspector",nameId:"Sang Inspektur",tagline:"Reliable, meticulous, and deeply responsible",taglineId:"Andal, teliti, dan sangat bertanggung jawab",traits:["Responsible","Meticulous","Loyal","Organized","Practical"],traitsId:["Bertanggung jawab","Teliti","Setia","Terorganisir","Praktis"],desc:"When you say you'll do something, it gets done — no follow-ups needed. ISTJs are the backbone of any organization: steady, reliable, and quietly brilliant. You're not flashy about it, but the world runs more smoothly because people like you are in it.",descId:"Ketika kamu mengatakan akan melakukan sesuatu, itu selesai — tidak perlu tindak lanjut. ISTJ adalah tulang punggung organisasi mana pun: stabil, andal, dan diam-diam brilian. Kamu tidak memamerkannya, tapi dunia berjalan lebih lancar karena orang-orang sepertimu ada.",career:"Accounting, law, military, medicine, project management, database administration",careerId:"Akuntansi, hukum, militer, kedokteran, manajemen proyek, administrasi basis data",rel:"You're deeply loyal and dependable — your partner always knows where they stand with you. You show love through actions and consistency, not grand gestures.",relId:"Kamu sangat setia dan dapat diandalkan — pasanganmu selalu tahu di mana posisi mereka bersamamu. Kamu menunjukkan cinta melalui tindakan dan konsistensi, bukan gerak-gerik besar.",compat:["ESFP","ESTP","ISTJ","ESTJ"],bestCompat:["ESFP","ESTP"]},
+  ISFJ:{name:"The Defender",nameId:"Sang Pelindung",tagline:"Warm, caring, and quietly dedicated",taglineId:"Hangat, peduli, dan diam-diam berdedikasi",traits:["Caring","Loyal","Patient","Observant","Reliable"],traitsId:["Peduli","Setia","Sabar","Observatif","Dapat diandalkan"],desc:"You're the person who remembers everyone's birthdays, checks in when things get hard, and makes sure nobody feels left out. ISFJs are the quiet heroes of everyday life — deeply warm, endlessly patient, and loyal beyond measure.",descId:"Kamu adalah orang yang mengingat ulang tahun semua orang, memeriksa ketika keadaan sulit, dan memastikan tidak ada yang merasa terabaikan. ISFJ adalah pahlawan diam-diam kehidupan sehari-hari — sangat hangat, tak terbatas sabar, dan setia melampaui batas.",career:"Nursing, social work, teaching, administration, interior design, library science",careerId:"Keperawatan, pekerjaan sosial, mengajar, administrasi, desain interior, ilmu perpustakaan",rel:"You're selfless in love — sometimes to a fault. You give everything to those you care about and need a partner who recognizes and appreciates that generosity.",relId:"Kamu tidak egois dalam cinta — terkadang berlebihan. Kamu memberikan segalanya kepada orang-orang yang kamu pedulikan dan butuh pasangan yang mengenali dan menghargai kemurahan hati itu.",compat:["ESFP","ESTP","ISFJ","ESTJ"],bestCompat:["ESFP","ESTP"]},
+  ESTJ:{name:"The Executive",nameId:"Sang Eksekutif",tagline:"Organized, direct, and naturally in charge",taglineId:"Terorganisir, langsung, dan secara alami berkuasa",traits:["Organized","Dependable","Honest","Decisive","Structured"],traitsId:["Terorganisir","Dapat diandalkan","Jujur","Tegas","Terstruktur"],desc:"You have a talent for taking messy situations and turning them into orderly ones. ESTJs love clear structures, defined roles, and making sure things get done the right way. You lead from the front and take accountability seriously.",descId:"Kamu berbakat mengubah situasi berantakan menjadi teratur. ESTJ menyukai struktur yang jelas, peran yang terdefinisi, dan memastikan semuanya dilakukan dengan benar. Kamu memimpin dari depan dan menganggap serius akuntabilitas.",career:"Military officer, judge, business manager, financial officer, school administrator",careerId:"Perwira militer, hakim, manajer bisnis, pejabat keuangan, administrator sekolah",rel:"You're a steady, reliable partner who values tradition and commitment. You take relationships seriously and put real effort into making them work long-term.",relId:"Kamu adalah pasangan yang stabil dan dapat diandalkan yang menghargai tradisi dan komitmen. Kamu menganggap hubungan serius dan benar-benar berusaha membuatnya berhasil dalam jangka panjang.",compat:["ISFP","ISTP","ESTJ","ISTJ"],bestCompat:["ISFP","ISTP"]},
+  ESFJ:{name:"The Consul",nameId:"Sang Konsul",tagline:"Caring, sociable, and community-focused",taglineId:"Peduli, sosial, dan berfokus pada komunitas",traits:["Caring","Sociable","Loyal","Warm","Organized"],traitsId:["Peduli","Sosial","Setia","Hangat","Terorganisir"],desc:"You thrive when the people around you are happy — and you have a rare gift for making that happen. ESFJs are social glue: you bring people together, make sure everyone is included, and create environments where others feel safe and welcomed.",descId:"Kamu berkembang ketika orang-orang di sekitarmu bahagia — dan kamu memiliki kemampuan langka untuk mewujudkan itu. ESFJ adalah perekat sosial: kamu menyatukan orang-orang, memastikan semua orang diikutsertakan, dan menciptakan lingkungan di mana orang merasa aman dan diterima.",career:"Healthcare, teaching, event planning, public relations, social work, hospitality",careerId:"Layanan kesehatan, mengajar, perencanaan acara, hubungan masyarakat, pekerjaan sosial, perhotelan",rel:"You're a devoted, thoughtful partner who puts enormous effort into nurturing your relationships. You need appreciation and reciprocation — you give so much, and you deserve to receive it too.",relId:"Kamu adalah pasangan yang berdedikasi dan penuh perhatian yang berupaya besar dalam memelihara hubunganmu. Kamu butuh penghargaan dan timbal balik — kamu memberi banyak, dan kamu berhak menerimanya juga.",compat:["ISFP","ISTP","ESFJ","ISFJ"],bestCompat:["ISFP","ISTP"]},
+  ISTP:{name:"The Crafter",nameId:"Sang Pengrajin",tagline:"Practical, observant, and quietly masterful",taglineId:"Praktis, observatif, dan diam-diam mahir",traits:["Practical","Analytical","Reserved","Spontaneous","Observant"],traitsId:["Praktis","Analitis","Pendiam","Spontan","Observatif"],desc:"You're the one who quietly figures out how everything works — then uses that knowledge to solve problems others didn't even notice. ISTPs are master troubleshooters: calm under pressure, endlessly curious about how things work, and always ready to take action.",descId:"Kamu adalah yang diam-diam mencari tahu cara kerja segalanya — lalu menggunakan pengetahuan itu untuk memecahkan masalah yang bahkan tidak disadari orang lain. ISTP adalah pemecah masalah ahli: tenang di bawah tekanan, selalu ingin tahu cara kerja sesuatu, dan selalu siap bertindak.",career:"Engineering, mechanics, forensics, software development, emergency response, surgery",careerId:"Teknik, mekanik, forensik, pengembangan perangkat lunak, respons darurat, bedah",rel:"You value your independence deeply, and you need a partner who respects that. You show love through helping and doing — words aren't always your strong suit, but your actions speak volumes.",relId:"Kamu sangat menghargai kemandirian, dan kamu butuh pasangan yang menghormatinya. Kamu menunjukkan cinta melalui membantu dan melakukan — kata-kata tidak selalu keahlianmu, tapi tindakanmu berbicara banyak.",compat:["ESTJ","ESFJ","ISTP","ESTP"],bestCompat:["ESTJ","ESFJ"]},
+  ISFP:{name:"The Adventurer",nameId:"Sang Petualang",tagline:"Gentle, artistic, and living fully in the moment",taglineId:"Lembut, artistik, dan menjalani sepenuhnya di saat ini",traits:["Artistic","Gentle","Sensitive","Spontaneous","Open-minded"],traitsId:["Artistik","Lembut","Sensitif","Spontan","Berpikiran terbuka"],desc:"You experience life through your senses and emotions — every moment feels like something worth noticing. ISFPs are quiet rebels with a rich inner world: you hate being forced into boxes and love expressing yourself through art, music, or simply how you choose to live.",descId:"Kamu mengalami hidup melalui indra dan emosimu — setiap momen terasa seperti sesuatu yang layak diperhatikan. ISFP adalah pemberontak diam dengan dunia batin yang kaya: kamu benci dipaksa masuk ke dalam kotak dan suka mengekspresikan diri melalui seni, musik, atau sekadar cara hidupmu.",career:"Fashion design, fine arts, music, photography, cooking, veterinary medicine",careerId:"Desain mode, seni rupa, musik, fotografi, memasak, kedokteran hewan",rel:"You need a relationship that feels free and authentic. You're deeply loving but guard your heart carefully — and when you open it, you love with quiet intensity.",relId:"Kamu butuh hubungan yang terasa bebas dan autentik. Kamu sangat mencintai tapi menjaga hatimu dengan hati-hati — dan ketika kamu membukanya, kamu mencintai dengan intensitas yang diam.",compat:["ESTJ","ESFJ","ISFP","ESFP"],bestCompat:["ESTJ","ESFJ"]},
+  ESTP:{name:"The Entrepreneur",nameId:"Sang Wirausahawan",tagline:"Bold, perceptive, and energized by action",taglineId:"Berani, perceptif, dan bersemangat dengan tindakan",traits:["Energetic","Perceptive","Bold","Direct","Pragmatic"],traitsId:["Energetik","Perceptif","Berani","Langsung","Pragmatis"],desc:"You don't wait for things to happen — you make them happen. ESTPs are action-oriented, fast-thinking, and endlessly adaptable. You read situations and people with uncanny accuracy, which makes you both a natural leader and an irresistible presence.",descId:"Kamu tidak menunggu sesuatu terjadi — kamu membuatnya terjadi. ESTP berorientasi tindakan, berpikir cepat, dan tak terbatas dapat beradaptasi. Kamu membaca situasi dan orang dengan akurasi luar biasa, yang membuatmu menjadi pemimpin alami dan kehadiran yang tak tertahankan.",career:"Sales, entrepreneurship, marketing, sports coaching, firefighting, emergency medicine",careerId:"Penjualan, kewirausahaan, pemasaran, pelatihan olahraga, pemadam kebakaran, kedokteran darurat",rel:"You're exciting, spontaneous, and magnetic in relationships. You need a partner who can keep up with your pace and who isn't afraid to take the world on with you.",relId:"Kamu menarik, spontan, dan magnetis dalam hubungan. Kamu butuh pasangan yang bisa mengikuti langkahmu dan tidak takut menghadapi dunia bersamamu.",compat:["ISFJ","ISTJ","ESTP","ISTP"],bestCompat:["ISFJ","ISTJ"]},
+  ESFP:{name:"The Entertainer",nameId:"Sang Penghibur",tagline:"Spontaneous, energetic, and living for the moment",taglineId:"Spontan, energetik, dan hidup untuk saat ini",traits:["Spontaneous","Energetic","Talkative","Playful","Warm"],traitsId:["Spontan","Energetik","Cerewet","Ceria","Hangat"],desc:"Wherever you go, the party follows. ESFPs are pure energy — you live in the present, love hard, laugh loud, and remind everyone around you that life is meant to be enjoyed. You don't just lighten the mood, you transform it.",descId:"Ke mana pun kamu pergi, pesta mengikuti. ESFP adalah energi murni — kamu hidup di masa kini, mencintai dengan sepenuh hati, tertawa keras, dan mengingatkan semua orang bahwa hidup dimaksudkan untuk dinikmati. Kamu tidak hanya mencerahkan suasana, kamu mengubahnya.",career:"Entertainment, event planning, sales, healthcare, teaching, tourism, fashion",careerId:"Hiburan, perencanaan acara, penjualan, layanan kesehatan, mengajar, pariwisata, mode",rel:"You're affectionate, fun, and totally present in relationships. You need excitement, connection, and a partner who appreciates your warmth and spontaneity.",relId:"Kamu penuh kasih sayang, menyenangkan, dan sepenuhnya hadir dalam hubungan. Kamu butuh kegembiraan, koneksi, dan pasangan yang menghargai kehangatan dan spontanitasmu.",compat:["ISFJ","ISTJ","ESFP","ISFP"],bestCompat:["ISFJ","ISTJ"]}
+};
+
+let lang = 'en';
+let currentQ = 0;
+let answers = {};
+let scores = {EI:0,SN:0,TF:0,JP:0};
+
+function t(key){ return T[lang][key] || T.en[key]; }
+
+function toggleLang(){
+  lang = lang === 'en' ? 'id' : 'en';
+  updateLangUI();
+}
+
+function updateLangUI(){
+  const tl = T[lang];
+  document.getElementById('lang-toggle').textContent = tl.langBtn;
+  document.getElementById('logo-sub').textContent = tl.logoSub;
+  document.getElementById('badge-text').textContent = tl.badge;
+  document.getElementById('hero-title').innerHTML = tl.heroTitle.replace('\n','<br>');
+  document.getElementById('hero-desc').textContent = tl.heroDesc;
+  document.getElementById('start-label').textContent = tl.startLabel;
+  document.getElementById('types-label').textContent = tl.typesLabel;
+  if(document.getElementById('screen-test').classList.contains('active')) renderQuestion();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startTest(){
+  currentQ = 0;
+  answers = {};
+  scores = {EI:0,SN:0,TF:0,JP:0};
+  showScreen('screen-test');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const tl = T[lang];
+  const q = questions[currentQ];
+  const total = questions.length;
+  const pct = Math.round((currentQ/total)*100);
+  document.getElementById('q-counter').textContent = tl.qCounter(currentQ+1, total);
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = Math.max(1,pct) + '%';
+  document.getElementById('dimension-tag').textContent = tl.dimTags[q.dim];
+  document.getElementById('q-text').textContent = lang==='id' ? q.id : q.en;
+  document.getElementById('q-sub').textContent = '';
+  document.getElementById('label-agree').textContent = tl.labelAgree;
+  document.getElementById('label-disagree').textContent = tl.labelDisagree;
+  const prev = document.getElementById('prev-btn');
+  const next = document.getElementById('next-btn');
+  prev.disabled = currentQ === 0;
+  const isLast = currentQ === total - 1;
+  next.querySelector('span').textContent = isLast ? tl.finishLabel : tl.nextLabel;
+  next.innerHTML = isLast
+    ? `<span>${tl.finishLabel}</span>`
+    : `<span>${tl.nextLabel}</span> &#8594;`;
+  const saved = answers[currentQ];
+  document.querySelectorAll('.scale-opt').forEach(opt=>{
+    opt.classList.toggle('selected', saved !== undefined && parseInt(opt.dataset.val) === saved);
+  });
+}
+
+function selectAnswer(val){
+  answers[currentQ] = val;
+  document.querySelectorAll('.scale-opt').forEach(opt=>{
+    opt.classList.toggle('selected', parseInt(opt.dataset.val) === val);
+  });
+}
+
+function nextQ(){
+  if(answers[currentQ] === undefined){ showToast(lang==='id'?'Pilih jawabanmu dulu!':'Please select an answer!'); return; }
+  if(currentQ === questions.length - 1){ computeResult(); return; }
+  currentQ++;
+  renderQuestion();
+}
+
+function prevQ(){
+  if(currentQ > 0){ currentQ--; renderQuestion(); }
+}
+
+function computeResult(){
+  scores = {EI:0,SN:0,TF:0,JP:0};
+  questions.forEach((q,i)=>{
+    if(answers[i] !== undefined) scores[q.dim] += answers[i] * q.dir;
+  });
+  const type = (scores.EI>=0?'E':'I')+(scores.SN>=0?'S':'N')+(scores.TF>=0?'T':'F')+(scores.JP>=0?'J':'P');
+  showResult(type);
+}
+
+function dimPct(dim){
+  const qs = questions.filter(q=>q.dim===dim);
+  const max = qs.length * 2;
+  const s = scores[dim];
+  return Math.round(((s + max) / (2*max)) * 100);
+}
+
+function showResult(type){
+  const d = typeData[type];
+  const tl = T[lang];
+  document.getElementById('res-type').textContent = type;
+  document.getElementById('res-name').textContent = lang==='id' ? d.nameId : d.name;
+  document.getElementById('res-tagline').textContent = lang==='id' ? d.taglineId : d.tagline;
+
+  const dimMap = [
+    {key:'EI', pos:'E', neg:'I'},
+    {key:'SN', pos:'S', neg:'N'},
+    {key:'TF', pos:'T', neg:'F'},
+    {key:'JP', pos:'J', neg:'P'}
+  ];
+  const bars = document.getElementById('dim-bars');
+  bars.innerHTML = '';
+  dimMap.forEach(dm=>{
+    const pct = dimPct(dm.key);
+    const dominant = pct >= 50 ? dm.pos : dm.neg;
+    const dispPct = pct >= 50 ? pct : 100 - pct;
+    const labels = tl.dimLabels[dm.pos];
+    bars.innerHTML += `
+      <div class="dim-row">
+        <div class="dim-label"><span>${dominant} — ${labels[pct>=50?'left':'right']}</span><span>${dispPct}%</span></div>
+        <div style="position:relative;padding-top:20px">
+          <span class="dim-pole left">${dm.pos}</span>
+          <span class="dim-pole right">${dm.neg}</span>
+          <div class="dim-bar-wrap">
+            <div class="dim-bar-fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  const traits = lang==='id' ? d.traitsId : d.traits;
+  document.getElementById('res-traits').innerHTML = traits.map(tr=>`<span class="trait-chip">${tr}</span>`).join('');
+  document.getElementById('res-desc').textContent = lang==='id' ? d.descId : d.desc;
+  document.getElementById('res-career').textContent = lang==='id' ? d.careerId : d.career;
+  document.getElementById('res-rel').textContent = lang==='id' ? d.relId : d.rel;
+
+  const compat = document.getElementById('res-compat');
+  compat.innerHTML = d.compat.map(c=>`<span class="compat-chip ${d.bestCompat.includes(c)?'best':''}">${c}${d.bestCompat.includes(c)?'  ★':''}</span>`).join('');
+
+  document.getElementById('traits-title').textContent = tl.traitsTitle;
+  document.getElementById('desc-title').textContent = tl.descTitle;
+  document.getElementById('career-title').textContent = tl.careerTitle;
+  document.getElementById('rel-title').textContent = tl.relTitle;
+  document.getElementById('compat-title').textContent = tl.compatTitle;
+  document.getElementById('share-btn').textContent = tl.shareBtn;
+  document.getElementById('retake-btn').textContent = tl.retakeBtn;
+
+  localStorage && localStorage.setItem('sv_result', JSON.stringify({type, scores, lang}));
+  showScreen('screen-result');
+}
+
+function shareResult(){
+  const type = document.getElementById('res-type').textContent;
+  const msg = `I just took the SoulVoyage MBTI test and I'm ${type}! What are you? 🌊`;
+  if(navigator.share){ navigator.share({title:'SoulVoyage',text:msg,url:window.location.href}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(msg+' '+window.location.href).then(()=>showToast(T[lang].copied)); }
+  else { showToast(T[lang].copied); }
+}
+
+function retake(){ startTest(); }
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2500);
+}
+</script>
